@@ -1,4 +1,4 @@
-package com.example.myapplication2;
+package com.example.bmi_project;
 
 public class Food {
     String name,category,calory,imageUrl,key;

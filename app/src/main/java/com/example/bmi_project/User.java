@@ -1,6 +1,4 @@
-package com.example.myapplication2;
-
-import java.util.ArrayList;
+package com.example.bmi_project;
 
 public class User {
     private String email,name,dob = null;

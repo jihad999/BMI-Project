@@ -1,4 +1,4 @@
-package com.example.myapplication2;
+package com.example.bmi_project;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;

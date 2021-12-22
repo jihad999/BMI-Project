@@ -1,4 +1,4 @@
-package com.example.myapplication2;
+package com.example.bmi_project;
 
 import android.view.LayoutInflater;
 import android.view.View;

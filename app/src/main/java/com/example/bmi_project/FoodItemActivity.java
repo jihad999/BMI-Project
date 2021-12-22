@@ -1,14 +1,14 @@
-package com.example.myapplication2;
+package com.example.bmi_project;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
 
-public class RecordItemActivity extends AppCompatActivity {
+public class FoodItemActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_record_item);
+        setContentView(R.layout.activity_food_item);
     }
 }

@@ -1,4 +1,4 @@
-package com.example.myapplication2;
+package com.example.bmi_project;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -6,7 +6,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.util.Patterns;
 import android.view.View;
 import android.widget.Button;
@@ -18,57 +17,54 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
-public class SignupActivity extends AppCompatActivity {
-
+public class LoginActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
+    private FirebaseUser firebaseUser;
+    private DatabaseReference databaseReference;
+    private String userID;
 
-    EditText name,email,password,re_password;
-    Button signup;
+    EditText email,password;
+    Button signin;
     ProgressDialog dialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_signup);
+        setContentView(R.layout.activity_login);
 
         // firebase instance
         mAuth = FirebaseAuth.getInstance();
 
         // view elements
-        name = findViewById(R.id.et_name);
-        email = findViewById(R.id.et_email);
+        email = findViewById(R.id.et_name);
         password = findViewById(R.id.et_password);
-        re_password = findViewById(R.id.et_repassword);
-        signup = findViewById(R.id.sign_up);
+        signin = findViewById(R.id.signin);
 
         // signup button listener
-        signup.setOnClickListener(new View.OnClickListener() {
+        signin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 // signup logic method
-                 signUp();
+                login();
             }
         });
+
 
     }
 
 
-    public void signUp(){
-       String name = this.name.getText().toString().trim();
-       String email = this.email.getText().toString().trim();
-       String password = this.password.getText().toString().trim();
-       String re_password = this.re_password.getText().toString().trim();
 
-       // validation
-        if (name.isEmpty()){
-            this.name.setError("name is required!");
-            this.name.requestFocus();
-            return;
-        }
+    private void login(){
+        String email = this.email.getText().toString().trim();
+        String password = this.password.getText().toString().trim();
 
+        // validation
         if (email.isEmpty()){
             this.email.setError("email is required!");
             this.email.requestFocus();
@@ -88,12 +84,6 @@ public class SignupActivity extends AppCompatActivity {
         }
 
 
-        if (!password.equals(re_password)){
-            this.password.setError("password is not match with re-password please try again!");
-            this.password.requestFocus();
-            return;
-        }
-
         if (password.length() < 6){
             this.password.setError("Min password length should be 6 characters!");
             this.password.requestFocus();
@@ -102,67 +92,68 @@ public class SignupActivity extends AppCompatActivity {
         //... end validation
 
         // signup in firebase
-        SignUpInFireBase(name,email,password);
+        LogInFireBase(email,password);
     }
 
 
-
-    private void SignUpInFireBase(String name,String email,String password){
-        dialog = new ProgressDialog(SignupActivity.this);
+    private void LogInFireBase(String email,String password){
+        dialog = new ProgressDialog(LoginActivity.this);
         dialog.setMessage("loading please wait..");
         dialog.setCancelable(false);
         dialog.setCanceledOnTouchOutside(false);
         dialog.show();
 
-        mAuth.createUserWithEmailAndPassword(email,password)
+
+        mAuth.signInWithEmailAndPassword(email,password)
                 .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if(task.isSuccessful()){
-                           User user = new User(email,name);
-
-                         FireBaseDB.DB.getCurrentUserData()
-                            .setValue(user).addOnCompleteListener(new OnCompleteListener<Void>() {
+                            firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+                            userID = firebaseUser.getUid();
+                            databaseReference = FirebaseDatabase.getInstance().getReference("users");
+                            databaseReference.child(userID).addListenerForSingleValueEvent(new ValueEventListener() {
                                 @Override
-                                public void onComplete(@NonNull Task<Void> task) {
-                                    if(task.isSuccessful()){
+                                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                    User user = snapshot.getValue(User.class);
+                                    if(user != null){
                                         dialog.hide();
-                                        Toast.makeText(SignupActivity.this, "user has been registered successfully!", Toast.LENGTH_LONG).show();
-                                        // redirect to info layout (complete profile)
-                                        startActivity(new Intent(SignupActivity.this,InfoActivity.class));
-                                        finish();
+                                        if(user.getDob() != null){
+                                            startActivity(new Intent(LoginActivity.this,HomeActivity.class));
+                                            finish();
+                                        }else{
+                                            startActivity(new Intent(LoginActivity.this,InfoActivity.class));
+                                            finish();
+                                        }
                                     }else{
                                         dialog.hide();
-                                        Toast.makeText(SignupActivity.this, "Failed to registered Try again!", Toast.LENGTH_LONG).show();
+                                        Toast.makeText(LoginActivity.this, "Failed to login Try again!", Toast.LENGTH_LONG).show();
                                     }
+                                }
+
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError error) {
+                                    dialog.hide();
+                                    Toast.makeText(LoginActivity.this, "Failed to login Try again!", Toast.LENGTH_LONG).show();
                                 }
                             });
 
                         }else{
                             dialog.hide();
-                            Toast.makeText(SignupActivity.this, "Failed to registered Try again!", Toast.LENGTH_LONG).show();
+                            Toast.makeText(LoginActivity.this, "Something wrong happened!!", Toast.LENGTH_LONG).show();
                         }
-
                     }
                 });
 
-
-
     }
 
 
-    public void LoginView(View view) {
-        Intent intent = new Intent(getApplicationContext(),LoginActivity.class);
+
+    public void signupView(View view) {
+        Intent intent = new Intent(getApplicationContext(),SignupActivity.class);
         startActivity(intent);
         finish();
     }
-
-
-//    public void infoView(View view) {
-//        Intent intent = new Intent(getApplicationContext(),InfoActivity.class);
-//        startActivity(intent);
-//        finish();
-//    }
 
     @Override
     public void onDestroy(){
@@ -171,5 +162,4 @@ public class SignupActivity extends AppCompatActivity {
             dialog.cancel();
         }
     }
-
 }

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.myapplication2">
+    package="com.example.bmi_project">
 
     <application
         android:allowBackup="true"
@@ -10,40 +10,40 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MyApplication2">
         <activity
-            android:name=".FoodItemActivity"
+            android:name="com.example.bmi_project.FoodItemActivity"
             android:exported="false" />
         <activity
-            android:name=".FoodListActivity"
+            android:name="com.example.bmi_project.FoodListActivity"
             android:exported="false" />
         <activity
-            android:name=".RecordItemActivity"
+            android:name="com.example.bmi_project.RecordItemActivity"
             android:exported="false" />
         <activity
-            android:name=".EditFoodActivity"
+            android:name="com.example.bmi_project.EditFoodActivity"
             android:exported="false" />
         <activity
-            android:name=".AddFoodActivity"
+            android:name="com.example.bmi_project.AddFoodActivity"
             android:exported="false" />
         <activity
-            android:name=".NewRecordActivity"
+            android:name="com.example.bmi_project.NewRecordActivity"
             android:exported="false" />
         <activity
-            android:name=".HomeActivity"
+            android:name="com.example.bmi_project.HomeActivity"
             android:exported="false" />
         <activity
-            android:name=".InfoActivity"
+            android:name="com.example.bmi_project.InfoActivity"
             android:exported="false" />
         <activity
-            android:name=".SignupActivity"
+            android:name="com.example.bmi_project.SignupActivity"
             android:exported="false" />
         <activity
-            android:name=".LoginActivity"
+            android:name="com.example.bmi_project.LoginActivity"
             android:exported="false" />
         <activity
-            android:name=".MainActivity"
+            android:name="com.example.bmi_project.MainActivity"
             android:exported="false" />
         <activity
-            android:name=".SplashActivity"
+            android:name="com.example.bmi_project.SplashActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
